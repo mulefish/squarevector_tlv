@@ -223,17 +223,17 @@ const COMMON_THINGS = {
     TABLE_CAMPAIGN_LETTER_VECTOR_NAME: "campaign_letter_vector",
     TABLE_ENTRIES_NAME: "entries",
     TABLE_CAMPAIGNS_NAME: "campaigns",
-    TABLE_GROUP_AFFINITY_DAY_NAME:"group_affinity_day",
-    TABLE_PEOPLE_GROUPS:"people_groups",
-    TABLE_TLV_AFFINITY_DAY:"tlv_affinity_day",
+    TABLE_GROUP_AFFINITY_DAY_NAME: "group_affinity_day",
+    TABLE_PEOPLE_GROUPS: "people_groups",
+    TABLE_TLV_AFFINITY_DAY: "tlv_affinity_day",
     FAIL: "FAIL",
     PASS: "PASS",
-    NEGATIVE:0,
-    POSITIVE:1,
+    NEGATIVE: 0,
+    POSITIVE: 1,
     UNIT_VECTOR: 20,
     // If a table row has this - it was a test: Feel free to delete it!
     TEST_FLAG: -9999999,
-    NOT_APPLICABLE:-2,
+    NOT_APPLICABLE: -2,
     PEOPLE_FINISHED_FILE: "PEOPLE_FINISHED.json",
     PEOPLE_TODO_FILE: "PEOPLE_TODO.json",
     // FINDME! TODO! CHANGE THIS TO DO THE REAL THING!
@@ -264,17 +264,17 @@ function green(msg) {
 }
 
 function addVectors(v1, v2) {
-    let v = [] 
-    for ( let i = 0; i < v1.length; i++ ) {
+    let v = []
+    for (let i = 0; i < v1.length; i++) {
         v[i] = v1[i] + v2[i]
-    } 
+    }
     return v
 }
 function vectorScalarMultiply(v1, scalar) {
     let v = []
-    for ( let i = 0; i < v1.length; i++ ) {
+    for (let i = 0; i < v1.length; i++) {
         v[i] = v1[i] * scalar
-    } 
+    }
     return v
 }
 
@@ -303,8 +303,15 @@ function importantMsg(meta, actual) {
 }
 
 
-
-
+function verdict(a, b, msg) {
+    if (JSON.stringify(a) === JSON.stringify(b)) {
+        const x = colors.bold + colors.bg_cyan + "PASS" +colors.reset + " " + msg
+        console.log(x)
+    } else {
+        const x = colors.bold + colors.bg_red + "FAIL" + colors.reset + " " + msg
+        console.log(x)
+    }
+}
 
 function convertAndCleanDynamoDBJSON(dynamoDbJson) {
     let normalJson = {};
@@ -544,4 +551,4 @@ function getLettersFromStrings(candidate, count) {
 
 
 
-module.exports = { vectorScalarMultiply, addVectors, yyyymmdd_hhmmss, getDayDelta, red, green, cyan, yellow, beautifyRawRecord, getLettersFromStrings, calculateNewPosition, getAngleBetweenVectors, getDotProduct, getVectorMagnitude, getDistanceBetweenVectors, getVector, importantMsg, colors, numberToExcelLetter, cleanObject, flattenObject, inflateObject, destringifyNumbers, COMMON_THINGS }
+module.exports = { verdict, vectorScalarMultiply, addVectors, yyyymmdd_hhmmss, getDayDelta, red, green, cyan, yellow, beautifyRawRecord, getLettersFromStrings, calculateNewPosition, getAngleBetweenVectors, getDotProduct, getVectorMagnitude, getDistanceBetweenVectors, getVector, importantMsg, colors, numberToExcelLetter, cleanObject, flattenObject, inflateObject, destringifyNumbers, COMMON_THINGS }
