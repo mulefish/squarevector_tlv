@@ -1,12 +1,12 @@
 
 const { cyan, colors, importantMsg, COMMON_THINGS } = require("./logic/library.js")
-const sqlite3 = require('sqlite3').verbose()
-const db = new sqlite3.Database("./" + COMMON_THINGS.DB_NAME)
 const express = require('express');
 const app = express();
 const path = require('path');
 const port = 3000;
+const { getTheBeginningDay, peek } = require('./logic/db_handler.js')
 
+const results = []
 app.use(express.static(path.join(__dirname, 'public'), {
   setHeaders: (res, filePath) => {
     if (filePath.endsWith('.js')) {
@@ -14,7 +14,17 @@ app.use(express.static(path.join(__dirname, 'public'), {
     }
   }
 }));
+app.get('/getTheBeginningDay', async (req, res) => {
+  const x = await getTheBeginningDay()
+  cyan("getTheBeginningDay!")
+  res.json(x)
+})  
 
+app.get('/peek', async (req, res) => {
+  const LoL = await peek()
+  cyan("peek!")
+  res.json(LoL)
+})  
 
 app.get('/about', (req, res) => {
   cyan("about.html")

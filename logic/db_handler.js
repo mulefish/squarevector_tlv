@@ -1,10 +1,17 @@
-const { yellow, importantMsg } = require("./library.js")
-
+const { COMMON_THINGS, yellow, importantMsg } = require("./library.js")
 const sqlite3 = require('sqlite3').verbose()
-let db = undefined
+const db = new sqlite3.Database(`./${COMMON_THINGS.DB_NAME}`);
 
-function setDB(path) {
-    db = new sqlite3.Database(path)
+async function getTheBeginningDay() {
+    const entries = COMMON_THINGS.TABLE_ENTRIES_NAME;
+    const sql = `SELECT sk FROM ${entries} WHERE itsu = 1 LIMIT 1`;
+    const result = await selecter(sql);
+    const sk = result[0]["sk"]
+
+    const day = new Date(sk * 1000);
+    console.log(sql + "\n" + JSON.stringify(result)  + "\n" + sk + "\n" + day ) 
+
+    return day 
 }
 
 async function inserter(table, wildCards, values) {
@@ -118,5 +125,23 @@ async function closeDB(whoCalledMe, isTest = false) {
         return true
     }
 }
+async function peek() {
+    const findings = [];
+    const tableKeys = Object.keys(COMMON_THINGS)
+        .filter(key => key.startsWith('TABLE'))
+        .sort();
 
-module.exports = { serialize, deleteTable, updater, deleter, selecter, getRowCount, inserter, setDB, closeDB }
+    for (let key of tableKeys) {
+        const table = COMMON_THINGS[key];
+        try {
+            const obj = await selecter(`SELECT count(*) AS count FROM ${table}`);
+            findings.push({ "count": obj[0].count, "table": table });
+        } catch (error) {
+            console.log(`FAILBOT on ${table}! Likely, this is a missing table.`);
+        }
+    }
+    return findings;
+}
+
+
+module.exports = { peek, getTheBeginningDay, serialize, deleteTable, updater, deleter, selecter, getRowCount, inserter, closeDB }
