@@ -250,6 +250,9 @@ const colors = {
     bold: "\x1b[1m",
     reset: "\x1b[0m"
 }
+function cyan(msg) {
+    console.log(colors.bg_cyan + msg + colors.reset)
+}
 function red(msg) {
     console.log(colors.bg_red + msg + colors.reset)
 }
@@ -541,4 +544,4 @@ function getLettersFromStrings(candidate, count) {
 
 
 
-module.exports = { vectorScalarMultiply, addVectors, yyyymmdd_hhmmss, getDayDelta, red, green, yellow, beautifyRawRecord, getLettersFromStrings, calculateNewPosition, getAngleBetweenVectors, getDotProduct, getVectorMagnitude, getDistanceBetweenVectors, getVector, importantMsg, colors, numberToExcelLetter, cleanObject, flattenObject, inflateObject, destringifyNumbers, COMMON_THINGS }
+module.exports = { vectorScalarMultiply, addVectors, yyyymmdd_hhmmss, getDayDelta, red, green, cyan, yellow, beautifyRawRecord, getLettersFromStrings, calculateNewPosition, getAngleBetweenVectors, getDotProduct, getVectorMagnitude, getDistanceBetweenVectors, getVector, importantMsg, colors, numberToExcelLetter, cleanObject, flattenObject, inflateObject, destringifyNumbers, COMMON_THINGS }

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>about</title>
+</head>
+
+<body>
+  <h3>About</h3>
+  <hr/>
+  <div id="data-container"></div>
+
+  <script>
+    function fetchData() {
+      fetch('/fakeSwagger')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Bad network!');
+          }
+          return response.json();
+        })
+        .then(data => {
+          function sortOnPath(a, b) {
+            if (a.path < b.path) {
+              return -1;
+            }
+            if (a.path > b.path) {
+              return 1;
+            }
+            return 0;
+          }
+
+          data.sort(sortOnPath)
+
+          let table = "<table border='1'>"
+          data.forEach((obj) => {
+            const href = `<a target='#' href='${obj['path']}'>${obj['path']}</a>`
+            table += "<tr><td>method</td><td>" + obj["method"] + "</td><td>path</td><td>" + href + "</td></tr>"
+          })
+          table += "</table>"
+          document.getElementById("data-container").innerHTML = table
+        })
+        .catch(error => {
+          alert("OH NO!\n" + error)
+        });
+    }
+    fetchData()
+  </script>
+</body>
+https://experience.adobe.com/#/@lululemonathleticacanadainc/so:lulule1/analytics/p/suite/1.3/index.html?a=DataWarehouse.GetRequestReport&switch_from_accnt=&jpj=28887927712095&ssSession=6b9161bb3313671ca6ff277170732eab#?reportSuiteChanged=1
+</html>
