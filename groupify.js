@@ -1,4 +1,6 @@
 const sqlite3 = require('sqlite3').verbose()
+const { red } = require("./logic/library.js")
+
 const { selecter, getTheBeginningDay, peek } = require('./logic/db_handler.js')
 const everything = {}
 
@@ -38,9 +40,10 @@ class groups_by_day {
             "more": [],
         }
     }
-
-
 }
+
+
+
 
 function sortObjByNumericKeys(arrayOfKeys) {
     let keys = []
@@ -51,11 +54,6 @@ function sortObjByNumericKeys(arrayOfKeys) {
     return keys
 }
 
-// // Example usage
-// const myObj = {'47': 'value1', '23': 'value2', '3': 'value3'};
-// const sortedObj = sortObjectByNumericKeys(myObj);
-// console.log(sortedObj);
-
 
 
 async function getEntries_sortOnItsu_asLoH(selectSql) {
@@ -65,14 +63,32 @@ async function getEntries_sortOnItsu_asLoH(selectSql) {
     return LoH
 }
 
+async function getAllPeople() { 
+    const sql = "select * from people"
+    const LoH = await selecter(sql)
+    let people = {} 
+    LoH.forEach((person)=> {
+        const pk = person.pk 
+        const lifetimeValue = person.tlv 
+        people[pk] = lifetimeValue
+    }) 
+    return people
+}
+
 async function getEntries_dealWithThem(entries_asLoH) {
+
     let results = {}
     for (let i = 0; i < entries_asLoH.length; i++) {
         const obj = entries_asLoH[i]
 
         if (!results.hasOwnProperty(obj.itsu)) {
+            // Add a new day!
             results[obj.itsu] = new groups_by_day(obj.itsu)
+            console.log( obj )
         }
+
+
+
 
 
     }
@@ -85,4 +101,4 @@ if (require.main === module) {
 
 }
 
-module.exports = { sortObjByNumericKeys, getAffinityLetters_asHoH, getEntries_sortOnItsu_asLoH, getEntries_dealWithThem }
+module.exports = { getAllPeople, sortObjByNumericKeys, getAffinityLetters_asHoH, getEntries_sortOnItsu_asLoH, getEntries_dealWithThem }

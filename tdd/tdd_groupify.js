@@ -1,53 +1,65 @@
-const { selecter} = require('./../logic/db_handler.js')
+const { selecter } = require('./../logic/db_handler.js')
 const { verdict } = require("./../logic/library.js")
-const {sortObjByNumericKeys, getEntries_dealWithThem,  getAffinityLetters_asHoH, getEntries_sortOnItsu_asLoH } = require('./../groupify.js')
-
-async function  getAffinityLetters_asHoH_test() { 
+const { getAllPeople, sortObjByNumericKeys, getEntries_dealWithThem, getAffinityLetters_asHoH, getEntries_sortOnItsu_asLoH } = require('./../groupify.js')
+const testCount = 4 
+async function getAffinityLetters_asHoH_test() {
     const HoH = await getAffinityLetters_asHoH()
     const keys = Object.keys(HoH)
-    const n = keys.length 
+    const n = keys.length
     const key = keys[0]
     const obj = HoH[key]
-    let isOk = true 
-    isOk &&= n > 260 
+    let isOk = true
+    isOk &&= n > 260
     isOk &&= obj.hasOwnProperty("seen")
     isOk &&= obj.hasOwnProperty("letter")
     isOk &&= obj.hasOwnProperty("isChild")
-    verdict(isOk, true, "getAffinityLetters_asHoH_test")
+    verdict(isOk, true, `1 of ${testCount}: getAffinityLetters_asHoH_test`)
 }
 
-async function getEntries_sortOnItsu_asLoH_test() { 
+async function getEntries_sortOnItsu_asLoH_test() {
     const number = 10
     const sql = "select * from entries limit " + number
     const LoH = await getEntries_sortOnItsu_asLoH(sql)
     const lastIndex = LoH.length - 1
-    let isOk = true 
+    let isOk = true
     isOk &&= LoH.length === number
     isOk &&= LoH[0].itsu < LoH[lastIndex].itsu
-    verdict(isOk, true, "getEntries_sortOnItsu_asLoH_test")
+    verdict(isOk, true, `2 of ${testCount}: getEntries_sortOnItsu_asLoH_test`)
 }
-async function sortObjByNumericKeys_test() { 
-    const given = ["34", "26", "102", "2"] 
+async function sortObjByNumericKeys_test() {
+    const given = ["34", "26", "102", "2"]
     const actual = sortObjByNumericKeys(given)
-    const expected = [ 2, 26, 34, 102 ]
+    const expected = [2, 26, 34, 102]
     const isOk = JSON.stringify(actual) === JSON.stringify(expected)
-    verdict(isOk, true, "sortObjByNumericKeys_test")    
+    verdict(isOk, true, `3 of ${testCount}: sortObjByNumericKeys_test`)
 }
 
-async function getEntries_dealWithThem_test() { 
+async function getAllPeople_test() { 
+    const people = await getAllPeople()
+    const n = Object.keys(people).length 
+    const isOk = n > 0
+    verdict(isOk, true, `4 of ${testCount}: getAllPeople_test has ` + n)
+}
+async function getEntries_dealWithThem_test() {
     const number = 10
     const sql = "select * from entries limit " + number
     const entries = await getEntries_sortOnItsu_asLoH(sql)
     const x = await getEntries_dealWithThem(entries)
 
-    console.log( Object.keys(x))
+    const isOk = false 
+    verdict(isOk, true, `5 of ${testCount}: getEntries_dealWithThem_test`)
 
 }
 
 
+async function main() { 
+    await getAffinityLetters_asHoH_test()
+    await getEntries_sortOnItsu_asLoH_test()
+    await sortObjByNumericKeys_test()
+    await getAllPeople_test()
+//    await getEntries_dealWithThem_test() 
+    
+}
+main() 
 
 
- getAffinityLetters_asHoH_test()
- getEntries_sortOnItsu_asLoH_test()
- sortObjByNumericKeys_test()  
-//getEntries_dealWithThem_test() 
