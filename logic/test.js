@@ -1,6 +1,6 @@
 
 const { vectorScalarMultiply, addVectors, yyyymmdd_hhmmss, getDayDelta, red, beautifyRawRecord, getLettersFromStrings, calculateNewPosition, getAngleBetweenVectors, getDotProduct, getVectorMagnitude, getDistanceBetweenVectors, getVector, colors, numberToExcelLetter, cleanObject, flattenObject, inflateObject, destringifyNumbers, COMMON_THINGS } = require("./library.js")
-const { updater, deleter, selecter, getRowCount, inserter, setDB, closeDB } = require("./db_handler.js")
+const { updater, deleter, selecter, getRowCount, inserter, closeDB } = require("./db_handler.js")
 
 let everything_is_all_good = true
 let count = 0
@@ -582,7 +582,6 @@ async function addVectors_test() {
 }
 async function main() {
 
-    setDB("./../" + COMMON_THINGS.DB_NAME)
 
     await common_strings_test1()
     await cleanObject_test1()
