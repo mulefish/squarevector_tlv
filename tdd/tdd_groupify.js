@@ -1,7 +1,7 @@
 const { selecter } = require('./../logic/db_handler.js')
 const { verdict } = require("./../logic/library.js")
-const { getAllPeople, sortObjByNumericKeys, getEntries_dealWithThem, getAffinityLetters_asHoH, getEntries_sortOnItsu_asLoH } = require('./../groupify.js')
-const testCount = 4 
+const { flattenKeys, getAllPeople, sortObjByNumericKeys, rollupEntries_byDay_byTotalLifetimeValue, getAffinityLetters_asHoH, getEntries_sortOnItsu_asLoH } = require('./../groupify.js')
+const testCount = 6
 async function getAffinityLetters_asHoH_test() {
     const HoH = await getAffinityLetters_asHoH()
     const keys = Object.keys(HoH)
@@ -34,32 +34,60 @@ async function sortObjByNumericKeys_test() {
     verdict(isOk, true, `3 of ${testCount}: sortObjByNumericKeys_test`)
 }
 
-async function getAllPeople_test() { 
+async function getAllPeople_test() {
     const people = await getAllPeople()
-    const n = Object.keys(people).length 
+    const n = Object.keys(people).length
     const isOk = n > 0
     verdict(isOk, true, `4 of ${testCount}: getAllPeople_test has ` + n)
 }
-async function getEntries_dealWithThem_test() {
+
+async function flattenKeys_test() {
+    const payload = { "genderAffinity": { "women": 20 }, "collectionAffinity": { "Align": 20 }, "activityAffinity": { "Yoga": 20 }, "categoryAffinity": { "Bestsellers": 21, "Leggings": 20, "Gift Ideas": 20, "Matching Sets": 20, "What's New": 21, "Pants": 20, "Women's 0-14": 20 } }
+    const flattened = await flattenKeys(payload)
+    const expected = {
+        'genderaffinity.women': 20,
+        'collectionaffinity.align': 20,
+        'activityaffinity.yoga': 20,
+        'categoryaffinity.bestsellers': 21,
+        'categoryaffinity.leggings': 20,
+        'categoryaffinity.gift_ideas': 20,
+        'categoryaffinity.matching_sets': 20,
+        'categoryaffinity.what^s_new': 21,
+        'categoryaffinity.pants': 20,
+        'categoryaffinity.women^s_0-14': 20
+    }
+    const isOk = JSON.stringify( flattened) === JSON.stringify( expected )
+    verdict(isOk, true, `5 of ${testCount}: flattenKeys_test`)
+}
+
+async function rollupEntries_byDay_byTotalLifetimeValue_test() {
+    const people = await getAllPeople()
     const number = 10
     const sql = "select * from entries limit " + number
     const entries = await getEntries_sortOnItsu_asLoH(sql)
-    const x = await getEntries_dealWithThem(entries)
-
-    const isOk = false 
-    verdict(isOk, true, `5 of ${testCount}: getEntries_dealWithThem_test`)
-
+    const everything = await rollupEntries_byDay_byTotalLifetimeValue(entries)
+    const keys = Object.keys(everything)
+    const n = keys.length
+    let isOk = true
+    isOk &&= n > 0
+    const firstKey = keys[0]
+    isOk &&= everything[firstKey].getDay() > -1
+    const groups = everything[firstKey].getGroups()
+    isOk &&= groups != undefined
+    //console.log( JSON.stringify(everything, null, 2 )  )
+    verdict(isOk, true, `6 of ${testCount}: rollupEntries_byDay_byTotalLifetimeValue_test`)
 }
 
 
-async function main() { 
+async function main() {
     await getAffinityLetters_asHoH_test()
     await getEntries_sortOnItsu_asLoH_test()
     await sortObjByNumericKeys_test()
     await getAllPeople_test()
-//    await getEntries_dealWithThem_test() 
-    
+    await flattenKeys_test()
+    await rollupEntries_byDay_byTotalLifetimeValue_test()
+
 }
-main() 
+main()
 
 
