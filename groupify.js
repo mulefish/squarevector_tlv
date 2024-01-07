@@ -1,9 +1,27 @@
 const sqlite3 = require('sqlite3').verbose()
-const { getTheBeginningDay, peek } = require('./logic/db_handler.js')
+const { selecter, getTheBeginningDay, peek } = require('./logic/db_handler.js')
 const everything = {}
+
+
+async function getAffinityLetters_asHoH() {
+    let HoH = {}
+    const sql = "select * from affinity_letter_vector;"
+    const LoH = await selecter(sql)
+    for (let i = 0; i < LoH.length; i++) {
+        const key = LoH[i]["key"]
+        HoH[key] = {
+            seen: LoH[i]["seen"],
+            //value: LoH[i]["value"],
+            letter: LoH[i]["letter"],
+            isChild: LoH[i]["isChild"]
+        }
+    }
+    return HoH
+}
+
 class groups_by_day {
     constructor(day) {
-        this.day = day 
+        this.day = day
         this.groups = {
             "negative": [],
             "zero": [],
@@ -26,4 +44,4 @@ function addEntry(entry) {
 
 }
 
-module.exports = { addEntry }
+module.exports = { getAffinityLetters_asHoH, addEntry }
