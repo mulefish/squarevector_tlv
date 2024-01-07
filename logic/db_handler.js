@@ -1,6 +1,16 @@
 const { COMMON_THINGS, yellow, importantMsg } = require("./library.js")
 const sqlite3 = require('sqlite3').verbose()
-const db = new sqlite3.Database(`./${COMMON_THINGS.DB_NAME}`);
+
+
+const absolutePath = '/Users/pmontgomery/DCP/squarevector_tlv/' + COMMON_THINGS.DB_NAME
+//let db = new sqlite3.Database(`./${abs}${COMMON_THINGS.DB_NAME}`);
+const db = new sqlite3.Database(absolutePath);
+
+
+// async function setDB(path) {
+//     yellow( path )
+//     db = new sqlite3.Database(`./${COMMON_THINGS.DB_NAME}`);
+// }
 
 async function getTheBeginningDay() {
     const entries = COMMON_THINGS.TABLE_ENTRIES_NAME;
@@ -143,5 +153,14 @@ async function peek() {
     return findings;
 }
 
+
+async function getSomeEntries() { 
+
+    const sql = "select * from entries limit 10;"
+    const entries = await selecter(sql)
+    console.log( entries )
+
+
+}
 
 module.exports = { peek, getTheBeginningDay, serialize, deleteTable, updater, deleter, selecter, getRowCount, inserter, closeDB }
