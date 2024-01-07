@@ -305,7 +305,7 @@ function importantMsg(meta, actual) {
 
 function verdict(a, b, msg) {
     if (JSON.stringify(a) === JSON.stringify(b)) {
-        const x = colors.bold + colors.bg_cyan + "PASS" +colors.reset + " " + msg
+        const x = colors.bold + colors.bg_green + "PASS" +colors.reset + " " + msg
         console.log(x)
     } else {
         const x = colors.bold + colors.bg_red + "FAIL" + colors.reset + " " + msg

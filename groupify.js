@@ -42,6 +42,21 @@ class groups_by_day {
 
 }
 
+function sortObjByNumericKeys(arrayOfKeys) {
+    let keys = []
+    arrayOfKeys.forEach((key) => {
+        keys.push(parseInt(key))
+    })
+    keys = keys.sort((a, b) => a - b);
+    return keys
+}
+
+// // Example usage
+// const myObj = {'47': 'value1', '23': 'value2', '3': 'value3'};
+// const sortedObj = sortObjectByNumericKeys(myObj);
+// console.log(sortedObj);
+
+
 
 async function getEntries_sortOnItsu_asLoH(selectSql) {
     //selectSql = "select * from entries limit 10;"
@@ -51,17 +66,17 @@ async function getEntries_sortOnItsu_asLoH(selectSql) {
 }
 
 async function getEntries_dealWithThem(entries_asLoH) {
-    let results = {} 
-    for ( let i = 0 ; i < entries_asLoH.length; i++ ) { 
+    let results = {}
+    for (let i = 0; i < entries_asLoH.length; i++) {
         const obj = entries_asLoH[i]
-        
-        if ( ! results.hasOwnProperty(obj.itsu)) { 
+
+        if (!results.hasOwnProperty(obj.itsu)) {
             results[obj.itsu] = new groups_by_day(obj.itsu)
-        } 
+        }
 
 
     }
-    return results 
+    return results
 }
 
 
@@ -70,4 +85,4 @@ if (require.main === module) {
 
 }
 
-module.exports = { getAffinityLetters_asHoH, getEntries_sortOnItsu_asLoH, getEntries_dealWithThem }
+module.exports = { sortObjByNumericKeys, getAffinityLetters_asHoH, getEntries_sortOnItsu_asLoH, getEntries_dealWithThem }

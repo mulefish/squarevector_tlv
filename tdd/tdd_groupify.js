@@ -1,6 +1,6 @@
 const { selecter} = require('./../logic/db_handler.js')
 const { verdict } = require("./../logic/library.js")
-const {getEntries_dealWithThem,  getAffinityLetters_asHoH, getEntries_sortOnItsu_asLoH } = require('./../groupify.js')
+const {sortObjByNumericKeys, getEntries_dealWithThem,  getAffinityLetters_asHoH, getEntries_sortOnItsu_asLoH } = require('./../groupify.js')
 
 async function  getAffinityLetters_asHoH_test() { 
     const HoH = await getAffinityLetters_asHoH()
@@ -26,20 +26,28 @@ async function getEntries_sortOnItsu_asLoH_test() {
     isOk &&= LoH[0].itsu < LoH[lastIndex].itsu
     verdict(isOk, true, "getEntries_sortOnItsu_asLoH_test")
 }
-
+async function sortObjByNumericKeys_test() { 
+    const given = ["34", "26", "102", "2"] 
+    const actual = sortObjByNumericKeys(given)
+    const expected = [ 2, 26, 34, 102 ]
+    const isOk = JSON.stringify(actual) === JSON.stringify(expected)
+    verdict(isOk, true, "sortObjByNumericKeys_test")    
+}
 
 async function getEntries_dealWithThem_test() { 
     const number = 10
     const sql = "select * from entries limit " + number
     const entries = await getEntries_sortOnItsu_asLoH(sql)
     const x = await getEntries_dealWithThem(entries)
-    console.log(x)
+
+    console.log( Object.keys(x))
 
 }
 
 
 
 
-getAffinityLetters_asHoH_test()
-getEntries_sortOnItsu_asLoH_test() 
-getEntries_dealWithThem_test() 
+ getAffinityLetters_asHoH_test()
+ getEntries_sortOnItsu_asLoH_test()
+ sortObjByNumericKeys_test()  
+//getEntries_dealWithThem_test() 
