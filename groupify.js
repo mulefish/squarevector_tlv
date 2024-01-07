@@ -38,10 +38,36 @@ class groups_by_day {
             "more": [],
         }
     }
-}
 
-function addEntry(entry) {
 
 }
 
-module.exports = { getAffinityLetters_asHoH, addEntry }
+
+async function getEntries_sortOnItsu_asLoH(selectSql) {
+    //selectSql = "select * from entries limit 10;"
+    const LoH = await selecter(selectSql)
+    LoH.sort((a, b) => a.itsu - b.itsu);
+    return LoH
+}
+
+async function getEntries_dealWithThem(entries_asLoH) {
+    let results = {} 
+    for ( let i = 0 ; i < entries_asLoH.length; i++ ) { 
+        const obj = entries_asLoH[i]
+        
+        if ( ! results.hasOwnProperty(obj.itsu)) { 
+            results[obj.itsu] = new groups_by_day(obj.itsu)
+        } 
+
+
+    }
+    return results 
+}
+
+
+
+if (require.main === module) {
+
+}
+
+module.exports = { getAffinityLetters_asHoH, getEntries_sortOnItsu_asLoH, getEntries_dealWithThem }
