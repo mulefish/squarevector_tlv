@@ -44,6 +44,7 @@ async function getAllPeople_test() {
 async function flattenKeys_test() {
     const payload = { "genderAffinity": { "women": 20 }, "collectionAffinity": { "Align": 20 }, "activityAffinity": { "Yoga": 20 }, "categoryAffinity": { "Bestsellers": 21, "Leggings": 20, "Gift Ideas": 20, "Matching Sets": 20, "What's New": 21, "Pants": 20, "Women's 0-14": 20 } }
     const flattened = await flattenKeys(payload)
+
     const expected = {
         'genderaffinity.women': 20,
         'collectionaffinity.align': 20,
@@ -74,7 +75,7 @@ async function rollupEntries_byDay_byTotalLifetimeValue_test() {
     isOk &&= everything[firstKey].getDay() > -1
     const groups = everything[firstKey].getGroups()
     isOk &&= groups != undefined
-    //console.log( JSON.stringify(everything, null, 2 )  )
+    console.log( JSON.stringify(everything, null, 2 )  )
     verdict(isOk, true, `6 of ${testCount}: rollupEntries_byDay_byTotalLifetimeValue_test`)
 }
 

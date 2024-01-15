@@ -35,31 +35,31 @@ class GroupsByDay {
     addPayload(tlv, payload) {
         let level = undefined
         if (tlv < 0) {
-            level = "negative"
+            level = "GROUP_NEGATIVE"
         } else if (tlv === 0) {
-            level = "zero"
+            level = "GROUP_ZERO"
         } else if (tlv <= 1000) {
-            level = "1000"
+            level = "GROUP_1K"
         } else if (tlv <= 5000) {
-            level = "5000"
+            level = "GROUP_5K"
         } else if (tlv <= 10000) {
-            level = "10000"
+            level = "GROUP_10K"
         } else if (tlv <= 20000) {
-            level = "20000"
+            level = "GROUP_20K"
         } else if (tlv <= 30000) {
-            level = "30000"
+            level = "GROUP_30K"
         } else if (tlv <= 40000) {
-            level = "40000"
+            level = "GROUP_40K"
         } else if ( tlv <= 50000) {
-            level = "50000"
+            level = "GROUP_50K"
         } else if ( tlv <= 60000 ) {
-            level = "60000"
+            level = "GROUP_60K"
         } else if ( tlv <= 70000) {
-            level = "70000"
+            level = "GROUP_70K"
         } else if ( tlv <= 80000) {
-            level = "80000"
+            level = "GROUP_80K"
         } else {
-            level = "more"
+            level = "GROUP_MORE"
         }
         if ( ! this.groups.hasOwnProperty(level)) {
             this.groups[level] = {}
@@ -121,10 +121,10 @@ async function flattenKeys(payload) {
             objWithFlattenedKeys[compoundKey] = value 
         }
     }
-
-
     return objWithFlattenedKeys
 }
+
+
 
 
 async function rollupEntries_byDay_byTotalLifetimeValue(entries_asLoH) {
