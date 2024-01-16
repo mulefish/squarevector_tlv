@@ -1,9 +1,6 @@
 const sqlite3 = require('sqlite3').verbose()
-const { red } = require("./logic/library.js")
-
-const { selecter, getTheBeginningDay, peek } = require('./logic/db_handler.js')
+const { selecter } = require('./logic/db_handler.js')
 const everything = {}
-
 
 async function getAffinityLetters_asHoH() {
     let HoH = {}
@@ -13,7 +10,6 @@ async function getAffinityLetters_asHoH() {
         const key = LoH[i]["key"]
         HoH[key] = {
             seen: LoH[i]["seen"],
-            //value: LoH[i]["value"],
             letter: LoH[i]["letter"],
             isChild: LoH[i]["isChild"]
         }
@@ -21,61 +17,37 @@ async function getAffinityLetters_asHoH() {
     return HoH
 }
 
-class GroupsByDay {
-    constructor(day) {
-        this.day = day
-        this.groups = {} 
+function getGroupName(tlv) { 
+    let level = undefined 
+    if (tlv < 0) {
+        level = "GROUP_NEGATIVE"
+    } else if (tlv === 0) {
+        level = "GROUP_ZERO"
+    } else if (tlv <= 1000) {
+        level = "GROUP_1K"
+    } else if (tlv <= 5000) {
+        level = "GROUP_5K"
+    } else if (tlv <= 10000) {
+        level = "GROUP_10K"
+    } else if (tlv <= 20000) {
+        level = "GROUP_20K"
+    } else if (tlv <= 30000) {
+        level = "GROUP_30K"
+    } else if (tlv <= 40000) {
+        level = "GROUP_40K"
+    } else if ( tlv <= 50000) {
+        level = "GROUP_50K"
+    } else if ( tlv <= 60000 ) {
+        level = "GROUP_60K"
+    } else if ( tlv <= 70000) {
+        level = "GROUP_70K"
+    } else if ( tlv <= 80000) {
+        level = "GROUP_80K"
+    } else {
+        level = "GROUP_MORE"
     }
-    getGroups() {
-        return this.groups
-    }
-    getDay() { 
-        return this.day
-    }
-    addPayload(tlv, payload) {
-        let level = undefined
-        if (tlv < 0) {
-            level = "GROUP_NEGATIVE"
-        } else if (tlv === 0) {
-            level = "GROUP_ZERO"
-        } else if (tlv <= 1000) {
-            level = "GROUP_1K"
-        } else if (tlv <= 5000) {
-            level = "GROUP_5K"
-        } else if (tlv <= 10000) {
-            level = "GROUP_10K"
-        } else if (tlv <= 20000) {
-            level = "GROUP_20K"
-        } else if (tlv <= 30000) {
-            level = "GROUP_30K"
-        } else if (tlv <= 40000) {
-            level = "GROUP_40K"
-        } else if ( tlv <= 50000) {
-            level = "GROUP_50K"
-        } else if ( tlv <= 60000 ) {
-            level = "GROUP_60K"
-        } else if ( tlv <= 70000) {
-            level = "GROUP_70K"
-        } else if ( tlv <= 80000) {
-            level = "GROUP_80K"
-        } else {
-            level = "GROUP_MORE"
-        }
-        if ( ! this.groups.hasOwnProperty(level)) {
-            this.groups[level] = {}
-        }
-        for ( let k in payload ) {
-            if ( this.groups[level].hasOwnProperty(k)) {
-                this.groups[level][k]++
-            } else {
-                this.groups[level][k] = 1
-            }
-        }
-    }
+    return level 
 }
-
-
-
 
 function sortObjByNumericKeys(arrayOfKeys) {
     let keys = []
@@ -86,11 +58,7 @@ function sortObjByNumericKeys(arrayOfKeys) {
     return keys
 }
 
-
-
 async function getEntries_sortOnItsu_asLoH(selectSql) {
-
-    //selectSql = "select * from entries limit 10;"
     const LoH = await selecter(selectSql)
     LoH.sort((a, b) => a.itsu - b.itsu);
     return LoH
@@ -124,15 +92,13 @@ async function flattenKeys(payload) {
     return objWithFlattenedKeys
 }
 
-
-
-
 async function rollupEntries_byDay_byTotalLifetimeValue(entries_asLoH) {
     /* This is the core of this file - everything else is here to support this function */ 
     const people = await getAllPeople()
     let everything = {}
     for (let i = 0; i < entries_asLoH.length; i++) {
         const obj = entries_asLoH[i]
+
         const day = obj.itsu
         if (!everything.hasOwnProperty(obj.itsu)) {
             // Add a new day!
@@ -147,9 +113,40 @@ async function rollupEntries_byDay_byTotalLifetimeValue(entries_asLoH) {
 }
 
 
+let day_group_entries = {} 
+function add_day_group_entry(complex_entry) {
+    const pk = complex_entry 
 
-if (require.main === module) {
 
+
+} 
+
+async function summerize_this_is_last_step_before_db_insert( LoH) {
+
+    let day_group_entries_HoH = {} 
+    for ( let i = 0 ; i < LoH.length; i++ ) { 
+        const obj = LoH[i] 
+        if ( ! day_group_entries_HoH.hasOwnProperty(obj.itsu)) {
+            day_group_entries_HoH[obj.itsu] = {} 
+        }
+        if ( ! day_group_entries_HoH[obj.itsu].hasOwnProperty(obj.groupName) ) { 
+            day_group_entries_HoH[obj.itsu][obj.groupName] = {} 
+            day_group_entries_HoH[obj.itsu][obj.groupName]['count'] = 0 
+            day_group_entries_HoH[obj.itsu][obj.groupName]['payload'] = {} 
+            day_group_entries_HoH[obj.itsu][obj.groupName]['cid'] = 0  
+        }
+
+        for ( let affinity in obj.payload) {
+            const seenCount = obj.payload[affinity]
+            if (  day_group_entries_HoH[obj.itsu][obj.groupName]['payload'].hasOwnProperty(affinity)) {
+                day_group_entries_HoH[obj.itsu][obj.groupName]['payload'][affinity] += seenCount
+            } else {
+                day_group_entries_HoH[obj.itsu][obj.groupName]['payload'][affinity] = seenCount
+            }
+            day_group_entries_HoH[obj.itsu][obj.groupName]['count']++
+            day_group_entries_HoH[obj.itsu][obj.groupName]['cid'] += obj.cid
+        }
+    }
+    return day_group_entries_HoH
 }
-
-module.exports = {flattenKeys,  getAllPeople, sortObjByNumericKeys, getAffinityLetters_asHoH, getEntries_sortOnItsu_asLoH, rollupEntries_byDay_byTotalLifetimeValue }
+module.exports = { summerize_this_is_last_step_before_db_insert, getGroupName, flattenKeys,  getAllPeople, sortObjByNumericKeys, getAffinityLetters_asHoH, getEntries_sortOnItsu_asLoH, rollupEntries_byDay_byTotalLifetimeValue }
